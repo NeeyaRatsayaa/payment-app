@@ -1,0 +1,202 @@
+<div class="bg-light">
+  <div class="container p-5 mw-100">
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-6 p-5 mt-5">
+        <p class="h5">Product : XXX-XXX-XX-X</p>
+        <p class="h6">Date : 6th June 2024 22:08</p>
+        <p class="h6">Amount : 662,567.00</p>
+      </div>
+      @if(showPaymentResult){
+      <div class="col-sm-12 col-md-6 col-lg-6 py-5 mt-5">
+        <!-- if success -->
+        @if (resCode == '000'){
+        <p class="lead text-primary">{{ resMessage }}</p>
+        <p class="lead"><b>Invoice:</b> {{ resInvoice }}</p>
+        }@else {
+        <!-- else fail -->
+        <p class="lead text-danger">{{ resMessage }}</p>
+        }
+      </div>
+      } @else {
+      <div class="col-sm-12 col-md-6 col-lg-6 py-5 mt-5">
+        <form [formGroup]="form" class="form-control-lg">
+          <!-- Card Types -->
+          <div class="row mb-3">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="col-form-label" for="cardTypes">Card Types</label>
+            </div>
+            <div class="col-sm-12 col-md-9 col-lg-9">
+              <select
+                formControlName="cardTypes"
+                class="form-select form-select-lg"
+                aria-label="Default select example"
+                id="cardTypes"
+              >
+                @for (item of cardTypesList; track item){
+                <option [value]="item.id">{{ item.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Card Number -->
+          <div class="row mb-3">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label for="cardNumber" class="col-form-label">Card Number</label>
+            </div>
+            <div class="col-sm-12 col-md-9 col-lg-9">
+              <input
+                appCardNumberFormat
+                type="text"
+                formControlName="cardNumber"
+                class="form-control form-control-lg"
+                id="cardNumber"
+                mask="{{ cardNumberFormat }}"
+              />
+
+              <div
+                *ngIf="
+                  form.get('cardNumber')?.touched &&
+                  form.get('cardNumber')?.invalid
+                "
+                class="alert alert-danger mt-1"
+              >
+                <div
+                  *ngIf="form.get('cardNumber')?.errors?.['required']"
+                  class="warn-text"
+                >
+                  Card number is required.
+                </div>
+                <div
+                  *ngIf="form.get('cardNumber')?.errors?.['minlength']"
+                  class="warn-text"
+                >
+                  length must be {{ cardNumberLength }} digits
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expiry -->
+          <div class="row mb-3">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label for="expiry" class="col-form-label">Expiry (MM/YY)</label>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <input
+                type="text"
+                formControlName="expiry"
+                class="form-control form-control-lg"
+                id="expiry"
+                placeholder="MM/YY"
+                mask="00/00"
+                [dropSpecialCharacters]="false"
+              />
+              <div
+                *ngIf="
+                  form.get('expiry')?.touched && form.get('expiry')?.invalid
+                "
+                class="alert alert-danger mt-1"
+              >
+                <div
+                  *ngIf="form.get('expiry')?.errors?.['required']"
+                  class="warn-text"
+                >
+                  Expiry date is required.
+                </div>
+                <div
+                  *ngIf="form.get('expiry')?.errors?.['pattern']"
+                  class="warn-text"
+                >
+                  Invalid expiry date format.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Name -->
+          <div class="row mb-3">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label for="name" class="col-form-label">Name</label>
+            </div>
+            <div class="col-sm-12 col-md-9 col-lg-9">
+              <input
+                type="text"
+                formControlName="name"
+                class="form-control form-control-lg"
+                id="name"
+                maxlength="30"
+              />
+              <div
+                *ngIf="form.get('name')?.touched && form.get('name')?.invalid"
+                class="alert alert-danger mt-1"
+              >
+                <div
+                  *ngIf="form.get('name')?.errors?.['required']"
+                  class="warn-text"
+                >
+                  Name is required.
+                </div>
+                <div
+                  *ngIf="form.get('name')?.errors?.['pattern'] || form.get('name')?.errors?.['maxlength'] "
+                  class="warn-text"
+                >
+                  Name must be alphabetic and space, maximum 30 characters.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="row mb-3">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+              <label class="col-form-label" for="email">Email address</label>
+            </div>
+            <div class="col-sm-12 col-md-9 col-lg-9">
+              <input
+                type="email"
+                formControlName="email"
+                class="form-control form-control-lg"
+                placeholder="name@example.com"
+                maxlength="50"
+                id="email"
+              />
+              <div
+                *ngIf="form.get('email')?.touched && form.get('email')?.invalid"
+                class="alert alert-danger mt-1"
+              >
+                <div
+                  *ngIf="form.get('email')?.errors?.['email']"
+                  class="warn-text"
+                >
+                  Invalid email format.
+                </div>
+                <div
+                  *ngIf="form.get('email')?.errors?.['maxlength']"
+                  class="warn-text"
+                >
+                  Email must be at most 50 characters.
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Submit Button -->
+          <div class="row pt-5">
+            <div class="col-sm-12 col-md-3 col-lg-3"></div>
+            <div class="col-sm-12 col-md-9 col-lg-9">
+              <button
+                type="submit"
+                [disabled]="this.form.invalid"
+                (click)="onSubmit()"
+                class="btn btn-primary col-12 btn-lg"
+              >
+                Confirm Payment
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      }
+    </div>
+  </div>
+</div>
