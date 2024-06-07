@@ -79,12 +79,9 @@ export class PaymentFromPageComponent implements OnInit {
 
   private onChangeCardType() {
     this.form.get('cardTypes')?.valueChanges.subscribe((cardTypeId) => {
-      console.log('Selected card type ID:', cardTypeId); // Debugging statement
       const selectedCardType = this.cardTypesList.find(
         (type) => type.id == cardTypeId
       );
-      console.log('Selected card type:', selectedCardType); // Debugging statement
-      
       this.form.get('cardNumber')?.setValue(null);
       if (selectedCardType?.name !== null) {
         this.form.get('cardNumber')?.enable();
@@ -103,12 +100,9 @@ export class PaymentFromPageComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log('Click Button');
-    console.log(this.form.valid);
     if (this.form.valid) {
       this.makePayment();
     }
-    console.log('Form Data:', this.form.value);
   }
 
   private makePayment() {
@@ -120,19 +114,21 @@ export class PaymentFromPageComponent implements OnInit {
       email: this.form.value.email,
     };
 
+    const cardTypeName = this.cardTypesList.find(
+      (type) => type.id == paymentData.cardSchemeId
+    );
+
     this.paymentService.makePayment(paymentData).subscribe(
       (response) => {
-        console.log(response);
         this.showPaymentResult = true
-        if (response.responseCode == '000') {
+        if (response.responseCode == '000' || paymentData.cardSchemeId != 4 || cardTypeName?.name != 'jcb' ) { //Ref.JCB id mock data, will change service back
           this.resInvoice = response.Invoice;
           this.resMessage = response.message;
           this.resCode = response.responseCode
-        }else if (response.responseCode == '999' || paymentData.cardSchemeId == 4){
+        }else{ 
           this.resInvoice = response.Invoice;
           this.resMessage = response.message;
           this.resCode = response.responseCode
-
         }
       },
 
