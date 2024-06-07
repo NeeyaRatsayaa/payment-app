@@ -17,7 +17,7 @@
         }
       </div>
       } @else {
-      <div class="col-sm-12 col-md-6 col-lg-6 py-5 mt-5">
+      <div class="col-sm-12 col-md-6 col-lg-6 py-5 mt-lg-5 mt-md-5">
         <form [formGroup]="form" class="form-control-lg">
           <!-- Card Types -->
           <div class="row mb-3">
@@ -28,9 +28,10 @@
               <select
                 formControlName="cardTypes"
                 class="form-select form-select-lg"
-                aria-label="Default select example"
                 id="cardTypes"
+                placeholder="name@example.com"
               >
+              <option value="" selected hidden>Please select</option>
                 @for (item of cardTypesList; track item){
                 <option [value]="item.id">{{ item.name }}</option>
                 }
@@ -149,7 +150,7 @@
           <!-- Email -->
           <div class="row mb-3">
             <div class="col-sm-12 col-md-3 col-lg-3">
-              <label class="col-form-label" for="email">Email address</label>
+              <label class="col-form-label" for="email">Email (Optional)</label>
             </div>
             <div class="col-sm-12 col-md-9 col-lg-9">
               <input

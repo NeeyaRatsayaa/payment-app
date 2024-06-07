@@ -33,6 +33,7 @@ export class PaymentFromPageComponent implements OnInit {
     { id: 1, name: 'visa' },
     { id: 2, name: 'master' },
     { id: 3, name: 'amex' },
+    { id: 4, name: 'jcb' },
   ];
 
   cardNumberLength: any;
@@ -67,19 +68,28 @@ export class PaymentFromPageComponent implements OnInit {
 
   getCardSchemes() {
     this.paymentService.getCardSchemes().subscribe(
-      (data) => (this.cardTypesList = data),
+      (data) => {
+        this.cardTypesList = data;
+        this.onChangeCardType(); // Ensure this is called after data is loaded
+      },
       (error) => console.error(error)
     );
   }
 
 
   private onChangeCardType() {
-    this.form.get('cardTypes')?.valueChanges.subscribe((cardType) => {
+    this.form.get('cardTypes')?.valueChanges.subscribe((cardTypeId) => {
+      console.log('Selected card type ID:', cardTypeId); // Debugging statement
+      const selectedCardType = this.cardTypesList.find(
+        (type) => type.id == cardTypeId
+      );
+      console.log('Selected card type:', selectedCardType); // Debugging statement
+      
       this.form.get('cardNumber')?.setValue(null);
-      if (cardType !== null) {
+      if (selectedCardType?.name !== null) {
         this.form.get('cardNumber')?.enable();
       }
-      if (cardType == 5) {
+      if (selectedCardType?.name === 'amex') {
         this.cardNumberFormat = '0000-0000-0000-000';
         this.cardNumberLength = 15;
       } else {
@@ -118,7 +128,7 @@ export class PaymentFromPageComponent implements OnInit {
           this.resInvoice = response.Invoice;
           this.resMessage = response.message;
           this.resCode = response.responseCode
-        }else if (response.responseCode == '999'){
+        }else if (response.responseCode == '999' || paymentData.cardSchemeId == 4){
           this.resInvoice = response.Invoice;
           this.resMessage = response.message;
           this.resCode = response.responseCode
@@ -131,7 +141,6 @@ export class PaymentFromPageComponent implements OnInit {
         this.resInvoice = '';
         this.resMessage = error.message;
         this.resCode = error.responseCode
-
       } 
     );
   }
