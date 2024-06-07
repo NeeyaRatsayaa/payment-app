@@ -39,6 +39,7 @@ export class PaymentFromPageComponent implements OnInit {
   cardNumberLength: any;
   cardNumberFormat = '0000-0000-0000-0000';
   showPaymentResult : boolean = false;
+  isLoading: boolean = false;
   resInvoice = '';
   resMessage = '';
   resCode = '';
@@ -101,6 +102,7 @@ export class PaymentFromPageComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.valid) {
+      this.isLoading = true;
       this.makePayment();
     }
   }
@@ -121,6 +123,7 @@ export class PaymentFromPageComponent implements OnInit {
     this.paymentService.makePayment(paymentData).subscribe(
       (response) => {
         this.showPaymentResult = true
+        this.isLoading = false;
         if (response.responseCode == '000' || paymentData.cardSchemeId != 4 || cardTypeName?.name != 'jcb' ) { //Ref.JCB id mock data, will change service back
           this.resInvoice = response.Invoice;
           this.resMessage = response.message;
@@ -134,6 +137,7 @@ export class PaymentFromPageComponent implements OnInit {
 
       error => {
         this.showPaymentResult = true
+        this.isLoading = false;
         this.resInvoice = '';
         this.resMessage = error.message;
         this.resCode = error.responseCode
